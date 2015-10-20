@@ -13,6 +13,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -29,6 +30,7 @@ public class GhostGrid : MonoBehaviour
 	public float gridSize = 1f;
 	public int quantity = 0;
 	public LayerMask layer;
+	public GameObject mainPrefab;
 
 	[HideInInspector]
 	public bool autoSnapEnabled = false;
@@ -80,6 +82,7 @@ public class GhostGrid : MonoBehaviour
 		if (gridSize > 0)
 		{
 			children = GetComponentsInChildren<Transform>();
+
 			quantity = children.Length;
 
 			for (int i = 0; i < quantity; i++)
