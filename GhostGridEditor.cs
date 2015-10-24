@@ -19,6 +19,8 @@ public class GhostGridEditor : Editor
 	// prefabs information
 	FileInfo[] prefabsFileInfo;
 
+	bool drawCursor = false;
+
     public void OnEnable()
     {
         grid = target as GhostGrid;
@@ -134,8 +136,7 @@ public class GhostGridEditor : Editor
     }
 
 	void drawAssetPreview(){
-		//		if(!isSetup)
-		//			return;
+
 		EditorGUILayout.BeginVertical(GUILayout.MinHeight(128.0f));
 
 		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
@@ -144,22 +145,11 @@ public class GhostGridEditor : Editor
 		// calls the handler when a new image is selected.
 		int counter = 0;
 		int n = 10; // prefabs
-		//foreach(Texture2D img in images)
 
 		prefabsFileInfo.Select(f => f.FullName).ToArray();
 		foreach (FileInfo f in prefabsFileInfo) 
 		{ 
-
 			GameObject prefab = Resources.Load (f.Name.Split('.')[0]) as GameObject;
-
-			Debug.Log("putting " + f.Name.Split('.')[0]);
-
-			//Texture2D img = AssetPreview.GetAssetPreview(prefab);
-			
-//			if(counter % 3 == 0)
-//			{
-//				GUILayout.BeginHorizontal();
-//			}
 			
 			++counter;
 			
@@ -167,15 +157,7 @@ public class GhostGridEditor : Editor
 			{
 				grid.mainPrefab = prefab;
 			}
-			
-//			if(counter % 3 == 0 || counter == n){
-//				GUILayout.EndHorizontal();
-//			}
 		}
-
-//		for (int i = 0; i < n; i++) {
-//				
-//		}
 
 		GUILayout.EndScrollView();
 
@@ -187,14 +169,34 @@ public class GhostGridEditor : Editor
 		Event e = Event.current;
 
 		// We use hotControl to lock focus onto the editor (to prevent deselection)
-		int controlID = GUIUtility.GetControlID(FocusType.Passive);
+		int controlID = GUIUtility.GetControlID (FocusType.Passive);
 
-		Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+		Ray ray = HandleUtility.GUIPointToWorldRay (Event.current.mousePosition);
 
-		drawGridCursor ();
+		if (drawCursor) {
+			drawGridCursor ();
+		}
 
-		switch (Event.current.GetTypeForControl(controlID))
-		{
+		switch (Event.current.GetTypeForControl (controlID)) {
+			case EventType.KeyDown:
+				if (e.keyCode == KeyCode.Y) { 
+					drawCursor = true;
+				}
+			break;
+			
+
+			case EventType.KeyUp:
+				if (e.keyCode == KeyCode.Y) {
+					drawCursor = false;
+				}
+			break;
+		}
+
+		if(!drawCursor){
+			return;
+		}
+			
+		switch (Event.current.GetTypeForControl (controlID)) {
 			case EventType.MouseDown:
 
 				drawGridCursor ();
